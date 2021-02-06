@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using ProductMangment.Model;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -56,6 +57,15 @@ namespace ProductMangment
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.Use(async (context, next) =>
+                {
+                    await next();
+                    if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value))
+                    {
+                        context.Request.Path = "/index.html";
+                        await next();
+                    }
+                });
             }
             else
             {
