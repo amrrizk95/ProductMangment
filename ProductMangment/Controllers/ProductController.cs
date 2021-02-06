@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using ProductMangment.Model;
 using ProductMangment.ViewModels;
 using System;
@@ -12,6 +13,7 @@ namespace ProductMangment.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+   
     public class ProductController : ControllerBase
     {
         private IUnitOfWork UnitOfWork;
@@ -23,6 +25,7 @@ namespace ProductMangment.Controllers
         // GET: api/<ProductController>
         [HttpGet]
         [Route("/api/Product/all")]
+        [EnableCors("AllowCors")]
         public async Task<ActionResult<IEnumerable<Product>>> Get()
         {
             var data =  ProductVM.getAll(UnitOfWork);
@@ -31,17 +34,23 @@ namespace ProductMangment.Controllers
 
         // GET api/<ProductController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        [Route("/api/Product")]
+        [EnableCors("AllowCors")]
+
+        public Product Get(int id)
         {
-            return "value";
+            var data = ProductVM.get(UnitOfWork, id);
+            return data;
         }
 
         // POST api/<ProductController>
         [HttpPost]
         [Route("/api/Product")]
-        public string Post(ProductVM productVM)
+        [EnableCors("AllowCors")]
+        public string Post([FromForm]ProductVM productVM)
         {
             var data = ProductVM.AddNew(UnitOfWork, productVM);
+            // upload photo here
             if (data)
             {
                 return "Data Saved";
@@ -54,9 +63,10 @@ namespace ProductMangment.Controllers
         }
 
         // PUT api/<ProductController>/5
-        [HttpPut("{id}")]
+        [HttpPut]
         [Route("/api/Product")]
-        public string Put(ProductVM productVM)
+        [EnableCors("AllowCors")]
+        public string Put([FromForm]ProductVM productVM)
         {
             
             var data = ProductVM.Edit(UnitOfWork, productVM);
@@ -73,6 +83,7 @@ namespace ProductMangment.Controllers
         // DELETE api/<ProductController>/5
         [Route("/api/Product")]
         [HttpDelete("{id}")]
+        [EnableCors("AllowCors")]
         public string Delete(int id)
         {
             var data = ProductVM.Remove(UnitOfWork, id);

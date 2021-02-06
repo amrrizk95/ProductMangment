@@ -42,13 +42,18 @@ namespace ProductMangment.ViewModels
         {
             var result = UnitOfWork.ProductRepository.GetAll();
             return result;
+        } 
+        public static Product get(IUnitOfWork UnitOfWork,int id)
+        {
+            return UnitOfWork.ProductRepository.Get(id);
         }
         public static bool AddNew(IUnitOfWork UnitOfWork,Product model)
         {
             try
             {
-
-            UnitOfWork.ProductRepository.Add(model);
+            model.CreatedDate = DateTime.Now;
+            model.LastUpdated = DateTime.Now;
+                UnitOfWork.ProductRepository.Add(model);
                 UnitOfWork.Complete();
                 return true;
             }
@@ -85,7 +90,7 @@ namespace ProductMangment.ViewModels
             }
             try
             {
-
+                Product.LastUpdated = DateTime.Now;
                 UnitOfWork.ProductRepository.Remove(Product);
                 UnitOfWork.Complete();
 
